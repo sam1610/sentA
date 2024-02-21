@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, TextInput, View , Pressable} from 'react-native';
 
 const SentimentAnalysis = () => {
@@ -16,7 +16,6 @@ const SentimentAnalysis = () => {
       body: JSON.stringify({ txt: text }) 
     };
 
-
     try {
       const response = await fetch(url, options)
       .then( res=>res.json())
@@ -31,10 +30,14 @@ const SentimentAnalysis = () => {
       // Handle errors gracefully
     }
   };
+useEffect(() => {
+    analyzeText
+}, [text])
+
 
   return (
     <View>
-      <TextInput
+        <TextInput
         style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
         onChangeText={setText}
         value={text}
@@ -46,13 +49,17 @@ const SentimentAnalysis = () => {
           backgroundColor: '#007bff',
           padding: 10,
           borderRadius: 5,
+          alignContent:"center", justifyContent:"center"
         }}
         onPress={analyzeText}
       >
-        <Text style={{fontSize:40}}>Analyze</Text>
+        <Text style={{fontSize:40}}>Sentiment: {sentiment}</Text>
       </Pressable>
       {sentiment && confidence && (
-        <Text style={{fontSize:40}}>Sentiment: {sentiment} (Confidence: {confidence})</Text>
+        <>
+          <BarIndicator confidence={confidence} sentiment={sentiment} />
+          <Text>Sentiment: {sentiment} (Confidence: {confidence})</Text>
+        </>
       )}
     </View>
   );
